@@ -1,0 +1,65 @@
+# DAX Calculations
+
+# Transaction = COUNTROWS(financials)
+
+
+COGS = 
+    SUMX(financials, 
+        financials[Units Sold]*financials[Manufacturing Price]
+    )
+
+
+Gross Sales = 
+    SUMX(financials, 
+        financials[Units Sold]*financials[Sale Price]
+    )
+
+
+Net Sales = 
+    [Gross Sales]-[Total Discount]
+
+
+Total Discount = 
+    SUM(financials[Discounts])
+
+
+Total Profit = 
+    [Net Sales]-[COGS]
+
+
+Conditional Formatting = 
+    VAR VProfit = [Total Profit]
+
+    RETURN
+        SWITCH(
+            TRUE(), 
+            VProfit > 0, "#8250C4",
+            VProfit < 0, "#E7553D"
+        )
+
+
+Profit Negative = 
+    VAR VProfit = [Total Profit]
+    VAR VResult = IF(VProfit < 0, VProfit, 0)
+
+    RETURN
+    VResult
+
+
+Profit Positive = 
+    VAR VProfit = [Total Profit]
+
+    RETURN
+    IF(VProfit > 0, VProfit, 0)
+
+
+Calendar = 
+    ADDCOLUMNS(
+     CALENDARAUTO(),
+        "Year", YEAR([Date]),
+        "Month", FORMAT([Date], "mmm"),
+        "MonthNumber", MONTH([Date]),
+        "Weekday", FORMAT([Date], "ddd"),
+        "WeekNumber", WEEKDAY([Date]),
+        "Qtr", FORMAT([Date], "\QQ")
+    )
